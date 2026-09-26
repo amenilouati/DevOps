@@ -24,7 +24,8 @@ pipeline {
         }
         stage('Docker Build & Deploy') {
             steps {
-                sh 'docker compose up -d --build'
+                sh 'docker compose -p devops-appgestiondesprojets down'
+                sh 'docker compose -p devops-appgestiondesprojets up -d --build'
             }
         }
     }
