@@ -22,5 +22,10 @@ pipeline {
                 }
             }
         }
+        stage('Docker Build & Deploy') {
+            steps {
+                sh 'docker compose up -d --build'
+            }
+        }
     }
 }
