@@ -41,7 +41,20 @@ pipeline {
                 }
             }
         }
-        stage('Docker Build & Deploy') {
+        stage('Docker Build & Push') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        docker build -t amenilouati/amenilouati-gestionprojets-backend:latest ./backend
+                        docker build -t amenilouati/amenilouati-gestionprojets-frontend:latest ./frontend
+                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                        docker push amenilouati/amenilouati-gestionprojets-backend:latest
+                        docker push amenilouati/amenilouati-gestionprojets-frontend:latest
+                    '''
+                }
+            }
+        }
+        stage('Deploy') {
             steps {
                 sh 'docker compose -p devops-appgestiondesprojets down'
                 sh 'docker compose -p devops-appgestiondesprojets up -d --build'
